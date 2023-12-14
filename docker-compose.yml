@@ -1,0 +1,18 @@
+version: '3'
+services:
+  builder_arm64v8:
+    cap_add:
+      - SYS_PTRACE
+    security_opt:
+      - seccomp:unconfined
+    build:
+      context: .
+      dockerfile: Dockerfile_builder
+      args:
+        UID: 1000
+        USER: builder
+        ARCH: armv8
+        IMAGE: arm64v8/debian:bookworm
+    container_name: builder_arm64v8
+    ports:
+      - "2022:22"
