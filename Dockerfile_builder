@@ -13,18 +13,24 @@ ENV DEBCONF_NONINTERACTIVE_SEEN true
 RUN { echo 'tzdata tzdata/Areas select Etc'; echo 'tzdata tzdata/Zones/Etc select UTC'; } | debconf-set-selections
 
 RUN apt-get update
-RUN apt-get install -y cmake openssh-server mc libncurses-dev g++ wget cpio rsync bc patch
+RUN apt-get install -y cmake openssh-server mc libncurses-dev g++ wget cpio rsync bc patch libssl-dev
 
 USER ${USER}
 RUN mkdir -p /home/${USER}/.ssh
-RUN mkdir -p /home/${USER}/config
+RUN mkdir -p /home/${USER}/configs
 COPY docker-configs/id_rsa_builder.pub /home/${USER}/.ssh/authorized_keys
 
-# mount config
 ADD buildroot /home/${USER}/buildroot
 COPY docker-configs/sipeed_licheepi_zero_ex_defconfig /home/${USER}/buildroot/configs/
-
 WORKDIR /home/${USER}/buildroot
+
+USER root
+RUN make O=/home/builder/output sipeed_licheepi_zero_ex_defconfig
+RUN make O=/home/builder/output
+COPY docker-configs/sun8i-v3s-licheepi-zero.dts /home/builder/output/build/linux-5.3.5/arch/arm/boot/dts/
+COPY docker-configs/sun8i-v3s-licheepi-zero-dock.dts /home/builder/output/build/linux-5.3.5/arch/arm/boot/dts/
+RUN make O=/home/builder/output linux-rebuild
+RUN make O=/home/builder/output
 
 USER root
 RUN service ssh start
