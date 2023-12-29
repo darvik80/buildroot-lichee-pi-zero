@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.0)
 
-project(ESP-hosted)
+project(buildroot-lichee-pi-zero)
 
 # Reset Git repository
 #execute_process(

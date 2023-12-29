@@ -25,12 +25,14 @@ COPY docker-configs/sipeed_licheepi_zero_ex_defconfig /home/${USER}/buildroot/co
 WORKDIR /home/${USER}/buildroot
 
 USER root
-RUN make O=/home/builder/output sipeed_licheepi_zero_ex_defconfig
-RUN make O=/home/builder/output
-COPY docker-configs/sun8i-v3s-licheepi-zero.dts /home/builder/output/build/linux-5.3.5/arch/arm/boot/dts/
-COPY docker-configs/sun8i-v3s-licheepi-zero-dock.dts /home/builder/output/build/linux-5.3.5/arch/arm/boot/dts/
-RUN make O=/home/builder/output linux-rebuild
-RUN make O=/home/builder/output
+RUN make sipeed_licheepi_zero_ex_defconfig
+RUN make source
+RUN make linux-rebuild
+COPY docker-configs/sun8i-v3s-licheepi-zero.dts /home/${USER}/buildroot/output/build/linux-5.3.5/arch/arm/boot/dts/
+COPY docker-configs/sun8i-v3s-licheepi-zero-dock.dts /home/${USER}/buildroot/output/build/linux-5.3.5/arch/arm/boot/dts/
+RUN make linux-rebuild
+#RUN make
+#RUN cp -rf /home/${USER}/buildroot/output/images/** /home/${USER}/images/
 
 USER root
 RUN service ssh start

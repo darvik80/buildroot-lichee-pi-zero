@@ -17,4 +17,4 @@ services:
     ports:
       - "2022:22"
     volumes:
-      - ./docker-data/images-v8:/home/${USER}/output/image
+      - ./docker-data/images:/home/builder/images
